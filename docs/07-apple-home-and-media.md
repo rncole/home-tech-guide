@@ -8,17 +8,33 @@ One example is a single kitchen light helper that combines a main light switch, 
 
 ## Presence handoff
 
-The household has a one-touch away control, connected to Apple Home’s last-person-leaves and first-person-arrives automations. Apple Home detects the household presence event; the exposed Home Assistant control changes the heating mode; Home Assistant applies the room rules.
+The household has a one-touch Heating Away control, connected to Apple Home's last-person-leaves and first-person-arrives automations. Apple handles the presence event; Home Assistant owns the heating transition.
 
-1. Create an away helper or equivalent control in Home Assistant. Define what entering away mode does to the heating and what returning home should restore.
+The reviewed implementation is more specific than “turn everything off”:
 
-2. Expose a compatible switch-like control through HomeKit Bridge. Verify that operating it manually changes Home Assistant’s state.
+| Event | Home Assistant action |
+| --- | --- |
+| Last person leaves while winter scheduling is active | Records that scheduled mode should resume, selects minimum heat and cancels towel holds |
+| First person returns after that transition | Reapplies the timetable appropriate to the current time and day |
+| Departure while already in Off or Vacation mode | Leaves that operating mode alone; does not record a schedule to restore |
+| Restart during an interrupted scheduled absence | Reconciles the stored away state and restoration flag |
 
-3. In Apple Home, create the last-person-leaves automation to activate away mode and the first-person-arrives automation to clear it. Configure the participating household members and required location settings.
+Minimum heat uses 16°C generally and 12°C in entrance and utility areas. Automatic boiler-demand control remains available at those targets. This is a temporary setback rather than an unconditional boiler shutdown.
 
-4. On return, recalculate the current schedule, guest settings and overrides rather than restoring every room to an arbitrary fixed temperature. Test both transitions with a manual fallback available.
+To reproduce the Apple-side connection:
 
-Presence is an input, not a complete occupancy model. Guests may remain when the tracked phones leave. Give guest mode a clear policy and make away state visible so someone can correct an unexpected result.
+1. Implement and manually test the Heating Away helper and its departure and return actions in Home Assistant.
+2. Expose only the household-facing helper through HomeKit Bridge, using a switch-like accessory. Keep internal restoration memory out of Apple Home.
+3. Create an Apple Home last-person-leaves automation that turns the away control on.
+4. Create a first-person-arrives automation that turns it off.
+5. Confirm the participating household members and location settings. Test from the actual phones, then check Home Assistant traces.
+6. Test a restart and leaving while already in Off mode, as well as normal departure and return.
+
+Home Assistant remembers whether departure actually interrupted the schedule. Return recalculates the current profile rather than replaying room temperatures saved hours earlier. The Home Assistant configuration does not contain Apple's location automation, so verify both ends of the handoff independently.
+
+Presence is an input, not a complete occupancy model. A guest may remain when tracked phones leave. The current away rule does not check the guest-visiting flag, so that flag should not be mistaken for a presence override.
+
+See [Heating ventilation and energy](08-heating-and-energy.md) for equipment, modes, radiator demand and bathroom rules.
 
 ## Apple TV and the actual television
 
