@@ -1,67 +1,68 @@
 # Home technology guide
 
-Services devices and integrations you can replicate
+A practical guide to the services, devices and integrations I use at home, with enough detail to reproduce one area at a time.
 
-This guide explains the technology I use at home and for personal projects, how the pieces connect, and how to reproduce one area at a time. The foundation is a custom domain for online services, a UniFi home network, a Synology server, and Home Assistant connected to Apple Home.
+**Begin with [Getting started](docs/getting-started.md).** Choose private email and files, an Apple-friendly smart home, or a private web application. You can also jump directly to a topic below; the whole stack is not a prerequisite.
 
-You do not need to copy the whole setup. Start with the part that solves a problem for you, prove it works, and add the next layer. A domain and email can stand alone; home automation does not require building web apps.
+## How the pieces fit
 
-## How to read this guide
-
-The household examples describe established use unless marked as an example or work in progress. Setup instructions are a replication path, rather than a record of every setting in my accounts. Examples use example.com and generic room names. No credentials, account names, private network addresses, real domains, or household identifying details are included.
-
-| Area | Main tools | Purpose |
+| Layer | Main tools | Connection to the rest |
 | --- | --- | --- |
-| Identity and files | Custom domain and Proton | Email identity, private storage and VPN service |
-| Web projects | GitHub and Cloudflare | Source control, hosting, APIs and application data |
-| Home infrastructure | UniFi and Synology | Networking, local services and virtual machines |
-| Home automation | Home Assistant and Apple Home | Device integration, automation and everyday controls |
-| Media and energy | Apple TV, Plex and HomeWizard | Playback integration and consumption visibility |
+| Online identity and files | Custom domain, Proton Mail and Drive | DNS keeps email, applications and service names independent |
+| Home infrastructure | UniFi and Synology | Networking, VPN policies, local storage, Plex and the Home Assistant VM |
+| Household control | Home Assistant, Apple Home and physical buttons | Shared rules connect devices; Apple Home supplies everyday controls and presence |
+| Security and alerts | Protect, SuperLink, USL-Smoke and doorbell relay | Local events feed Protect, Home Assistant and configured critical phone alerts |
+| Custom applications | GitHub, Cloudflare and transactional email | Reviewed source becomes hosted applications with their own data and access boundaries |
+| Off-site data protection | Replication with a family member's DS920 | A second location for selected NAS data |
 
-## Start with the outcome you want
+These are separate systems with deliberate integration points. Proton VPN is outbound routing, not remote access back home. Protect recordings are not Plex libraries. Git history is not a backup of application data.
 
-The [starting guide](docs/16-start-here.md) offers three smaller paths: custom-domain email and files, an Apple-friendly smart home, or a private web application. It also covers cost categories, prerequisites and a network-policy planning matrix.
+## Reading order
 
-## Contents
+### Getting started
 
-- [Domains and Proton Mail](docs/01-domains-and-email.md)
-- [Proton Drive and VPN](docs/02-storage-and-vpn.md)
-- [GitHub and Cloudflare applications](docs/03-github-and-cloudflare.md)
-- [Application examples and email](docs/04-applications-and-email.md)
-- [Network server and remote access](docs/05-network-and-server.md)
-- [Home Assistant and device protocols](docs/06-home-assistant.md)
-- [Apple Home presence and television](docs/07-apple-home-and-media.md)
-- [Heating ventilation and energy](docs/08-heating-and-energy.md)
-- [A practical rollout and references](docs/09-rollout-and-references.md)
-- [Full example building a household helpdesk](docs/10-helpdesk-worked-example.md)
-- [Synology storage Home Assistant and Plex](docs/11-synology-and-plex.md)
-- [Apple devices everyday controls and files](docs/12-apple-devices-and-files.md)
-- [Household automation examples](docs/13-household-automations.md)
-- [Protect cameras sensors and notifications](docs/14-protect-and-notifications.md)
-- [Maintenance backups and failure behavior](docs/15-maintenance-and-failures.md)
-- [Start here with a smaller setup](docs/16-start-here.md)
+- [Start here with a smaller setup](docs/getting-started.md)
 
-## Architecture at a glance
+### Online services
 
-```mermaid
-flowchart TD
-  Domain["Custom domain and Cloudflare DNS"] --> Mail["Proton Mail"]
-  Domain --> Apps["Cloudflare web applications"]
-  Git["GitHub source and previews"] --> Apps
-  Apps --> Data["D1 Durable Objects and R2 as needed"]
-  Apple["Apple Home and Siri"] <--> HA["Home Assistant on Synology"]
-  HA --> Devices["Zigbee IP and Matter devices"]
-  Presence["Apple household presence"] --> Apple
-  Router["UniFi home network"] --> HA
-  Router --> VPN["Proton VPN for selected outbound traffic"]
-```
+- [Domains and Proton Mail](docs/services/domains-and-email.md)
+- [Proton Drive and VPN](docs/services/proton-drive-and-vpn.md)
 
-The domain is a naming layer, not a single host. Home Assistant remote access, web hosting, human email, app email and outbound VPN use distinct paths.
+### Home infrastructure
 
-## Status and scope
+- [Home networks VPNs and remote access](docs/infrastructure/network.md)
+- [Synology storage Home Assistant and Plex](docs/infrastructure/synology-and-plex.md)
 
-Based on setup work through 30 October 2026. This is a sanitized replication guide rather than a live configuration audit. Working household patterns, illustrative extensions and unfinished projects are identified in the chapters. No real service addresses, secrets or private configuration values are required to read or reuse it.
+### Smart home and daily use
+
+- [Home Assistant and device protocols](docs/home/home-assistant.md)
+- [Apple Home devices presence and files](docs/home/apple-home-and-devices.md)
+- [Heating ventilation and energy](docs/home/heating-and-energy.md)
+- [Household automation examples](docs/home/automation-examples.md)
+- [Protect cameras sensors and notifications](docs/home/protect-and-notifications.md)
+
+### Building applications
+
+- [GitHub and Cloudflare applications](docs/apps/github-and-cloudflare.md)
+- [Full example building a household helpdesk](docs/apps/helpdesk-example.md)
+
+### Keeping it running
+
+- [Maintenance backups and failure behavior](docs/operations/maintenance-and-failures.md)
+- [Official references and scope](docs/references.md)
+
+The topic chapters explain equipment, setup and verification. The [helpdesk example](docs/apps/helpdesk-example.md) is a complete application walkthrough; [automation examples](docs/home/automation-examples.md) shows how household rules interact. [Maintenance](docs/operations/maintenance-and-failures.md) explains backups and dependencies.
+
+## Scope and evidence
+
+The guide is based on household setup work and selected repository configuration through 30 October 2026. It uses fictional domains and omits credentials, private endpoints, account identifiers and personal household data.
+
+Descriptions distinguish **confirmed household use**, **behavior present in reviewed configuration**, and **illustrative or unfinished work**. A rule in GitHub is not proof that the running system has loaded it. Setup sequences explain a replication path rather than exposing live account settings.
+
+Provider menus and plan limits change. Use the official references in each chapter for current instructions. Unconfirmed settings remain identified where they affect replication.
 
 ## Maintaining the guide
 
-Update the relevant chapter in a branch, check its links and examples, and review the change before merging. Keep personal deployment values in a separate private configuration. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Each topic has one main chapter. Prefer a short explanation and a link when another chapter needs the same detail. Use branches and review changes before merging; check links and privacy before publication. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Older numbered chapter URLs remain as forwarding pages. New links use the topic folders above.
