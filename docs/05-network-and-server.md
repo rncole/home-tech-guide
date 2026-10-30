@@ -159,31 +159,38 @@ When reproducing either VPN path, test the effective result for IPv4, IPv6 and D
 
 Also define what happens if a Remote Exit client visits a Proton-selected destination. The answer depends on the actual route precedence and exclusions. Document the intended winner and verify it; do not assume that source-based and destination-based policies combine automatically.
 
-## Protect smoke and CO events
+## Protect smoke and CO alarms
 
-UniFi Protect supplies smoke and CO information to Home Assistant through the Protect integration. Two different hardware paths must be distinguished:
+The household uses **UniFi USL-Smoke smoke and carbon-monoxide alarms**. These detect smoke and CO directly and provide their own audible warning. They are not merely listening for another alarm.
 
-| Path | What detects the hazard | What reaches Protect |
-| --- | --- | --- |
-| Dedicated SuperLink smoke and CO alarm such as USL-Smoke | The alarm's own smoke and CO sensing | Alarm information over SuperLink |
-| Alarm-sound detection on supported Protect equipment | An existing independent alarm detects the hazard | Recognition of that alarm's audible pattern |
+Their network integration runs through SuperLink and UniFi Protect, with alarm information ultimately feeding into Home Assistant.
 
-The [USL-Smoke product information](https://eu.store.ui.com/eu/en/products/usl-smoke) describes a dedicated smoke and CO alarm. It must not be described as merely a microphone listening to another alarm.
+```mermaid
+flowchart TD
+  Hazard["Smoke or carbon monoxide"] --> Alarm["USL-Smoke detection and local audible alarm"]
+  Alarm --> Gateway["SuperLink gateway"]
+  Gateway --> Protect["UniFi Protect"]
+  Protect --> HA["Home Assistant Protect integration"]
+  HA --> Response["Configured household responses"]
+```
 
-Earlier household Home Assistant inventories also contained alarm-sound detection entities. Those establish the presence of an acoustic-event path, but do not prove the model or sensing method of every installed detector. The exact household detector model needs confirmation before choosing one of these rows as its hardware description.
+The local warning and network integration have distinct roles. The alarm warns people nearby; Protect and Home Assistant provide visibility and the opportunity for additional responses. Do not make the alarm's basic warning function dependent on Home Assistant.
 
-The shared integration pattern is: device detection or event → UniFi Protect → Home Assistant integration → chosen alerts or household actions. Check actual entities and event values for the installed hardware, including whether smoke and CO appear separately and how unavailable state is represented.
+### Replicate the integration
 
-To replicate:
+1. Install the USL-Smoke alarms according to the manufacturer's placement, installation and testing instructions.
+2. Set up the SuperLink gateway and adopt the alarms into Protect.
+3. Confirm each alarm's connection and available status information in Protect.
+4. Add the UniFi Protect integration in Home Assistant with suitable authorization.
+5. Inspect the actual entities and events exposed for the installed hardware and software versions. Verify smoke, CO and device-unavailable behavior rather than inferring them from a generic entity name.
+6. Configure the intended downstream responses and verify them with the manufacturer's approved test procedure.
+7. Check notification delivery independently of the alarm's own audible warning.
 
-1. Identify the exact alarm or listening device and follow its installation requirements.
-2. Confirm its event in Protect first.
-3. Add the Protect integration in Home Assistant with suitable authorization.
-4. Inspect the actual entities and distinguish smoke, CO and unavailable state.
-5. Configure the intended responses and test using the manufacturer's approved test procedure.
-6. Verify downstream notifications independently of the alarm's own local warning.
+The installed equipment and the integration path are confirmed household details. A particular Home Assistant smoke/CO notification or response automation is not specified here because its final rule has not been verified.
 
-No particular Home Assistant smoke/CO response automation is asserted here; the established point is that Protect information feeds into Home Assistant. Keep the detector's own warning function distinct from the additional network and notification chain.
+Earlier inventories also contained Protect alarm-sound entities. Those are separate capabilities and should not be used to describe the USL-Smoke alarms as acoustic listeners.
+
+See the [official USL-Smoke product information](https://eu.store.ui.com/eu/en/products/usl-smoke) and [Home Assistant Protect integration documentation](https://www.home-assistant.io/integrations/unifiprotect/) for hardware and integration details.
 
 ## An existing doorbell made smart with a Protect relay
 
