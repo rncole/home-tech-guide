@@ -17,7 +17,7 @@ Write for someone reproducing a pattern in their own home. Explain purpose, depe
 - Use the Apple Home chapter for presence setup and the heating chapter for heating behavior.
 - Use the Protect chapter for alarm and doorbell details, and networking for their connectivity requirements.
 - Keep backup and failure procedures in operations; the NAS chapter records the actual replication arrangement.
-- Preserve legacy numbered pages as short forwarding links when moving content.
+- When moving content, update internal links and remove obsolete pages rather than retaining forwarding stubs.
 - Update previous and next links and the README when changing reading order.
 - State whether a claim comes from confirmed use, reviewed source or an example. Keep unresolved live behavior explicit.
 
