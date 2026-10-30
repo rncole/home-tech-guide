@@ -18,6 +18,10 @@ The household examples describe established use unless marked as an example or w
 | Home automation | Home Assistant and Apple Home | Device integration, automation and everyday controls |
 | Media and energy | Apple TV, Plex and HomeWizard | Playback integration and consumption visibility |
 
+## Start with the outcome you want
+
+The [starting guide](docs/16-start-here.md) offers three smaller paths: custom-domain email and files, an Apple-friendly smart home, or a private web application. It also covers cost categories, prerequisites and a network-policy planning matrix.
+
 ## Contents
 
 - [Domains and Proton Mail](docs/01-domains-and-email.md)
@@ -31,6 +35,11 @@ The household examples describe established use unless marked as an example or w
 - [A practical rollout and references](docs/09-rollout-and-references.md)
 - [Full example building a household helpdesk](docs/10-helpdesk-worked-example.md)
 - [Synology storage Home Assistant and Plex](docs/11-synology-and-plex.md)
+- [Apple devices everyday controls and files](docs/12-apple-devices-and-files.md)
+- [Household automation examples](docs/13-household-automations.md)
+- [Protect cameras sensors and notifications](docs/14-protect-and-notifications.md)
+- [Maintenance backups and failure behavior](docs/15-maintenance-and-failures.md)
+- [Start here with a smaller setup](docs/16-start-here.md)
 
 ## Architecture at a glance
 
