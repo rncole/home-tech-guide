@@ -21,6 +21,53 @@ Home Assistant is the integration and automation engine. Apple Home provides fam
 
 5. Add HomeKit Bridge and expose a deliberate list of entities to Apple Home. This is the direction from Home Assistant to Apple Home; HomeKit Device is a different integration for bringing compatible accessories into Home Assistant. [reference 7](09-rollout-and-references.md)
 
+## What runs where in my setup
+
+Home Assistant OS runs as a virtual machine on a Synology DS920+. The NAS provides the host; Home Assistant OS provides the automation environment. The Zigbee coordinator is made available to the VM, and ZHA joins the radiator valves, sensors and scene controls to that radio network. No exact coordinator model is prescribed here because it has not been confirmed.
+
+The practical division is:
+
+| Layer | Responsibility |
+| --- | --- |
+| Synology and VM | Keep the Home Assistant host running |
+| Zigbee coordinator and ZHA | Communicate with paired Zigbee devices |
+| Native integrations | Bring in IP devices and services such as Apple TV and HomeWizard |
+| Helpers | Store modes, timers, event latches and restoration state |
+| Scripts and automations | Calculate targets, coordinate demand and handle exceptions |
+| HomeKit Bridge | Expose selected controls and states to Apple Home |
+| Apple Home | Siri, familiar controls and household presence triggers |
+
+The heating installation uses an ATAG boiler, a boiler-demand relay and sixteen Sonoff radiator valves. Separate room sensors feed external-temperature values to selected valves. Door and window contacts feed heating-pause logic. Bathroom humidity feeds both extract-fan behavior and a separate towel-radiator shower countdown.
+
+HomeWizard, sometimes easy to confuse with the other “Home” names, supplies meter information. It does not decide which room should heat. HomeKit supplies presence and controls; it does not need to reproduce Home Assistant's radiator schedule.
+
+See [Heating ventilation and energy](08-heating-and-energy.md) for the full equipment inventory, thresholds, interaction diagrams and verification sequence.
+
+## Organize the automation so it remains understandable
+
+This configuration uses the main configuration file to include automations, scripts, scenes and a directory of packages. Packages group related helpers and logic, such as door pauses, towel control, demand indicators and temporary absence.
+
+A reusable structure is:
+
+- A room-target script that applies changes consistently and respects contact pauses.
+- A timetable script that calculates the current profile.
+- Mode helpers for scheduled operation, guest use and temporary absence.
+- Timers for temporary boosts and manual holds.
+- Event latches to distinguish one shower from many humidity updates.
+- Demand sensors for rooms and floors.
+- A separate boiler-relay automation with explicit timing conditions.
+- A dashboard showing the state that explains a decision.
+
+Naming a helper “Away” does not itself create an away mode. An automation must react to it, and the return path must be defined. Similarly, a timer needs expiry and restart handling, not just a start action.
+
+## Make changes through Git and load them deliberately
+
+Selected YAML configuration is version controlled in GitHub. The household workflow pulls merged changes into Home Assistant through the File Editor environment, validates the configuration, and then reloads the relevant part or restarts where required.
+
+A GitHub merge does not automatically change the running instance. New package helpers and integrations may need a restart; automation or script changes can often use the appropriate reload. Confirm the relevant entities and inspect traces after loading changes.
+
+Keep authentication, secrets, device-specific identifiers and personal history out of a shareable guide. Use a private configuration for actual deployment values. This repository explains the architecture without reproducing those values.
+
 ## Matter Thread and the IPv6 lesson
 
 Matter is an application protocol; Thread is a low-power IPv6 network. A Thread border router connects that mesh to the home IP network. Suitable Apple TVs and HomePods provide this role, alongside their Apple Home hub functions. The Apple TV media integration does not itself configure the Thread network. [reference 8](09-rollout-and-references.md)
