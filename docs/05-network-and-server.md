@@ -257,6 +257,8 @@ Keep the normal configuration recorded so a diagnostic exception does not become
 
 ## Synology Home Assistant and Plex
 
+The [dedicated Synology and Plex chapter](11-synology-and-plex.md) covers storage, native Plex installation, the Home Assistant VM, Apple TV playback, remote family servers and live-TV troubleshooting.
+
 Synology provides local storage and services and hosts the Home Assistant OS virtual machine. Give core services predictable addresses, sensible permissions and a backup arrangement appropriate to their data. A Git repository of YAML is not a backup of the VM or its history.
 
 Plex is part of the media environment, with the NAS and Apple TV. A reproducible pattern is a Plex server reading authorized media folders and an Apple TV client. Prove local playback before adding remote streaming or policy routing.
