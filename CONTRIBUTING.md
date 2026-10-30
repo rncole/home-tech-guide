@@ -22,3 +22,7 @@ Write for someone reproducing a pattern in their own home. Explain purpose, depe
 - State whether a claim comes from confirmed use, reviewed source or an example. Keep unresolved live behavior explicit.
 
 This repository is documentation only. It does not deploy services, provision accounts or apply home automation configuration.
+
+## PDF export
+
+When changing chapter order, update export/guide.json as well as README.md and chapter navigation. Run python3 export/build.py --prepare-only to check book links. Review the PDF after changes to tables, figures or layout; export/README.md explains the full build.

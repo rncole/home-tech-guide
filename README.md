@@ -80,7 +80,10 @@ Descriptions distinguish **confirmed household use**, **behavior present in revi
 
 Provider menus and plan limits change. Use the official references in each chapter for current instructions. Unconfirmed settings remain identified where they affect replication.
 
+## Export as a PDF
+
+The [PDF export setup](export/README.md) provides a reusable LaTeX template and a GitHub Actions build. Run **Export guide PDF** in Actions to download a typeset PDF or the editable LaTeX package. Markdown remains the source of truth.
+
 ## Maintaining the guide
 
 Each topic has one main chapter. Prefer a short explanation and a link when another chapter needs the same detail. Use branches and review changes before merging; check links and privacy before publication. See [CONTRIBUTING.md](CONTRIBUTING.md).
-

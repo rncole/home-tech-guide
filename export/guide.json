@@ -1,0 +1,22 @@
+{
+  "title": "Home technology guide",
+  "subtitle": "Services devices and integrations you can replicate",
+  "edition": "Shareable edition",
+  "date": "30 October 2026",
+  "chapters": [
+    {"path": "docs/getting-started.md", "part": "Getting started"},
+    {"path": "docs/services/domains-and-email.md", "part": "Online services"},
+    {"path": "docs/services/proton-drive-and-vpn.md"},
+    {"path": "docs/infrastructure/network.md", "part": "Home infrastructure"},
+    {"path": "docs/infrastructure/synology-and-plex.md"},
+    {"path": "docs/home/home-assistant.md", "part": "Smart home and daily use"},
+    {"path": "docs/home/apple-home-and-devices.md"},
+    {"path": "docs/home/heating-and-energy.md"},
+    {"path": "docs/home/automation-examples.md"},
+    {"path": "docs/home/protect-and-notifications.md"},
+    {"path": "docs/apps/github-and-cloudflare.md", "part": "Building applications"},
+    {"path": "docs/apps/helpdesk-example.md"},
+    {"path": "docs/operations/maintenance-and-failures.md", "part": "Keeping it running"},
+    {"path": "docs/references.md"}
+  ]
+}

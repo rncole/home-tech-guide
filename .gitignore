@@ -5,3 +5,9 @@
 *.key
 *.pem
 private/
+
+# Generated PDF export and local rendering dependencies
+/build/
+/export/node_modules/
+/export/.cache/
+/export/__pycache__/

@@ -1,0 +1,73 @@
+name: Export guide PDF
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'export/**'
+      - '.github/workflows/export-pdf.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'export/**'
+      - '.github/workflows/export-pdf.yml'
+permissions:
+  contents: read
+concurrency:
+  group: guide-pdf-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: export/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Pandoc and LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-latex-extra texlive-fonts-recommended fonts-lmodern fonts-dejavu-core
+      - name: Install locked diagram renderer
+        run: npm ci --prefix export
+      - name: Use runner Chrome for diagram rendering
+        run: |
+          chrome_path="$(command -v google-chrome)"
+          test -n "$chrome_path"
+          echo "PUPPETEER_EXECUTABLE_PATH=$chrome_path" >> "$GITHUB_ENV"
+      - name: Build PDF and editable LaTeX
+        run: python3 export/build.py
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-technology-guide-pdf
+          path: build/pdf/home-technology-guide.pdf
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload editable LaTeX package
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-technology-guide-latex
+          path: |
+            build/pdf/guide.tex
+            build/pdf/figures/*.pdf
+            build/pdf/metadata.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guide-pdf-diagnostics
+          path: |
+            build/pdf/guide.log
+            build/pdf/guide.tex
+          if-no-files-found: ignore
+          retention-days: 7
