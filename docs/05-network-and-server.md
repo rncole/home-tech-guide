@@ -186,7 +186,9 @@ The local warning and network integration have distinct roles. The alarm warns p
 6. Configure the intended downstream responses and verify them with the manufacturer's approved test procedure.
 7. Check notification delivery independently of the alarm's own audible warning.
 
-The installed equipment and the integration path are confirmed household details. A particular Home Assistant smoke/CO notification or response automation is not specified here because its final rule has not been verified.
+The household receives **critical alerts on the phone for smoke and CO alarms**. This is confirmed behavior, alongside the alarm's own audible warning and the Protect-to-Home-Assistant integration. The exact notification-rule owner is not documented here; the guide does not assume that the phone alert must pass through Home Assistant.
+
+When replicating, configure critical-alert delivery and the required phone permissions in the app responsible for notifications. Verify the actual alert behavior on the phone, rather than assuming that an ordinary push notification provides the same treatment.
 
 Earlier inventories also contained Protect alarm-sound entities. Those are separate capabilities and should not be used to describe the USL-Smoke alarms as acoustic listeners.
 
@@ -194,7 +196,7 @@ See the [official USL-Smoke product information](https://eu.store.ui.com/eu/en/p
 
 ## An existing doorbell made smart with a Protect relay
 
-The household uses a **UniFi SuperLink Relay USL-Relay** to connect an ordinary doorbell button and conventional bell to Protect, with a push alert when the button is pressed. This adds notification capability without requiring the button and bell to be replaced by a video doorbell.
+The household uses a **UniFi SuperLink Relay USL-Relay** to connect an ordinary doorbell button and conventional bell to Protect, with a **critical alert on the phone** when the button is pressed. This adds notification capability without requiring the button and bell to be replaced by a video doorbell.
 
 The arrangement has two separate electrical jobs:
 
@@ -210,11 +212,11 @@ flowchart TD
   Input --> Action["Configured momentary bell action"]
   Action --> Output["Relay output and existing bell circuit"]
   Input --> Link["SuperLink gateway and Protect"]
-  Link --> Push["Doorbell push alert"]
+  Link --> Push["Critical alert on phone"]
   Link --> HA["Home Assistant Protect integration"]
 ```
 
-The local bell action, Protect event, push delivery and optional Home Assistant response are separate things to verify. The household confirms the doorbell push alert; its exact notification-rule owner is not established in the selected YAML, so this guide does not assign that alert specifically to a Home Assistant automation.
+The local bell action, Protect event, push delivery and optional Home Assistant response are separate things to verify. The household confirms critical phone alerts for the doorbell as well as for smoke/CO alarms. The exact notification-rule owner is not established in the selected YAML, so this guide does not assign those alerts specifically to a Home Assistant automation.
 
 A replication sequence is:
 
@@ -223,7 +225,7 @@ A replication sequence is:
 3. Adopt the relay through the SuperLink gateway into Protect.
 4. Connect and test the button input separately from the bell output, following the equipment documentation.
 5. Configure a momentary bell action rather than leaving the bell output continuously active.
-6. Configure the button event's push notification and test with the phone locked and away from home.
+6. Configure the button event's critical phone alert and required notification permissions, then test with the phone locked and away from home.
 7. Bring the relay's supported states into Home Assistant if additional automations are wanted.
 8. Test one press, a held button, repeated presses, and behavior after a restart.
 
