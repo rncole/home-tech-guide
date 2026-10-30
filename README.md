@@ -30,6 +30,7 @@ The household examples describe established use unless marked as an example or w
 - [Heating ventilation and energy](docs/08-heating-and-energy.md)
 - [A practical rollout and references](docs/09-rollout-and-references.md)
 - [Full example building a household helpdesk](docs/10-helpdesk-worked-example.md)
+- [Synology storage Home Assistant and Plex](docs/11-synology-and-plex.md)
 
 ## Architecture at a glance
 
