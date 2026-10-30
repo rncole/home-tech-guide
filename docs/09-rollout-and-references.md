@@ -1,5 +1,7 @@
 # A practical rollout and references
 
+For a choice of smaller starter setups, prerequisites and cost categories, use [Start here](16-start-here.md). For ongoing operation and confirmed NAS replication, use [Maintenance backups and failure behavior](15-maintenance-and-failures.md).
+
 ## Build in a useful order
 
 1. Domain and email: get Proton mail delivery and authentication working before adding app email.
