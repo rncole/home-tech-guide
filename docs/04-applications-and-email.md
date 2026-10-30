@@ -1,32 +1,45 @@
 # Application examples and email
 
+The personal applications share GitHub and Cloudflare building blocks, but use different state and access patterns. The [GitHub and Cloudflare chapter](03-github-and-cloudflare.md) explains the platform; the [full helpdesk example](10-helpdesk-worked-example.md) follows a concrete project from source to email delivery.
+
 ## A multiplayer card game
 
-One project grew from a physical-game scorekeeper into an optional virtual card game. Its architecture includes a browser interface, Worker APIs, D1 account and history storage, and Durable Objects with WebSockets for live game sessions. Optional accounts, invitations, saved sessions and push notifications add separate concerns beyond the card rules.
+One project grew from a physical-game scorekeeper into an optional virtual card game. Its architecture includes a browser interface, Worker APIs, D1 account and history storage, and Durable Objects with WebSockets for live sessions.
 
-The transferable lesson is to keep authoritative game decisions on the server. Clients submit actions; the server checks whose turn it is, validates the move, updates state, and distributes the result. Persist enough state to resume a session. Browser push uses subscription records and VAPID configuration; the private key remains a server secret.
+The server owns authoritative game state. Clients submit actions; server logic checks turns and moves and distributes updated state. Invitations, resume behavior and notifications add separate concerns beyond card rules.
 
-## A household helpdesk
+## The household helpdesk as a full example
 
-The newer helpdesk turns messages into tickets, threads replies, stores attachments, and queues acknowledgements. Its design uses Workers, D1 and R2, with a separate transactional email provider for sending. Inbound reliability and queued delivery were still being stabilized at this guide’s date. Follow-ups, metrics, assets, a knowledge base and escalation rules are a development backlog, rather than a finished feature list.
+The helpdesk uses a private dashboard Worker and a separate signed inbound-webhook Worker. D1 stores tickets, messages, audit records and pending work. Private R2 storage holds attachments. Resend supplies the newer incoming-email and outgoing-message paths.
 
-## Keep human email and app email separate
+Scheduled processing separates receiving an event, creating a ticket and sending an acknowledgement. That is a useful contrast with the game's live session coordination: not every app needs Durable Objects or an always-open connection.
 
-The intended pattern keeps ordinary domain mail at Proton, uses an intake subdomain for machine processing, and authenticates a separate notification subdomain for transactional sending. An existing Proton address can forward into the intake once that path is reliable. The tested intake and production forwarding should not be confused.
+The repository contains an earlier direct Cloudflare email-handler implementation as well as the newer webhook path. Some early project documents lag behind the source. The worked example explains the actual entry points and separates implemented code from verified runtime behavior.
 
-1. Leave the main domain MX records at Proton. Configure application intake on a distinct subdomain using the email processing service’s supported routing.
+[Read the full helpdesk example](10-helpdesk-worked-example.md).
 
-2. Parse incoming mail in server code. Match replies using message identifiers and controlled ticket references, handle attachments and duplicates, and avoid reply loops.
+## Keep human email and application email separate
 
-3. Configure the transactional sender, such as Resend, for its own sending subdomain. Add the DNS records it provides and keep its restricted API key in Worker secrets.
+| Function | Example identity | Responsibility |
+| --- | --- | --- |
+| Human inbox | help@example.com | Proton correspondence |
+| Application intake | help@intake.example.com | Incoming-message processing |
+| Application sender | help@notifications.example.com | Authenticated transactional sending |
+| Private dashboard | helpdesk.example.com | Human authentication through Access |
+| Provider webhook | inbound-helpdesk.example.com | Signed machine requests |
 
-4. Record outgoing messages in an outbox and process them with retries and delivery status. Receiving an email, creating a ticket, and sending its acknowledgement are separate success conditions.
+A domain name does not establish any of these access or delivery paths by itself.
 
-5. Before forwarding a real support address, test a new ticket, a threaded reply, duplicate delivery, an attachment, and temporary send failure. Confirm retries do not produce repeated tickets or acknowledgements.
+Leave main-domain mail at Proton. Verify intake directly before forwarding the established support address. Configure the notification sender independently, and test actual reply headers so responses return to the right place.
 
-Private dashboards also need authentication and authorization. A custom hostname and HTTPS do not make an app private. Cloudflare Access can provide an access boundary; also check preview and default hostnames so they do not bypass the intended restriction. [reference 4](09-rollout-and-references.md)
+## Verify each success separately
+
+A webhook accepted by the server is not necessarily a completed ticket. A ticket created in D1 is not necessarily an acknowledgement sent. A provider's sending acceptance is not necessarily delivery to the inbox.
+
+Use stored processing and outbox states to distinguish those steps. Test duplicates, attachments, wrong-ticket replies and provider failure. Keep the human dashboard private while allowing authenticated machine traffic to the separate webhook.
+
+The helpdesk's newer relationship migration begins follow-up and linking schema work. It does not establish that a metrics dashboard, asset management, knowledge base or escalation system is complete.
 
 ---
 
 [Back to the guide](../README.md)
-
