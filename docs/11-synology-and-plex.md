@@ -110,7 +110,7 @@ Hardware-assisted transcoding was discussed as a possible diagnostic or improvem
 
 ## Remote family servers and site-to-site access
 
-The wider setup includes Synology systems at other family sites, with some shares and backups replicated between them. The exact source-to-destination jobs are not documented here.
+The household backs up to a family member's Synology DS920, with replication between the two NASes. Other family-hosted services also exist. The precise job scopes, schedules and retention are not inventoried here.
 
 Remote stored-media streaming from a family Synology/Plex system has worked in the household. Site-to-site networking is another available path between locations, but Plex account sharing, application access and network routing are separate controls.
 
@@ -176,7 +176,9 @@ When Plex and Home Assistant share the NAS, monitor the host as well as each ser
 
 ## Backups replication and snapshots
 
-Some household shares and backups are replicated between family Synology systems. This confirms an off-site pattern, but not a complete backup inventory.
+The confirmed off-site backup arrangement uses a family member's **Synology DS920**, with replication between that NAS and the household system. This provides a second physical location for the selected data. It does not, by itself, establish the replication package, whether individual jobs run in one or both directions, which shares are included, or how earlier versions and deletions are handled.
+
+See [Maintenance backups and failure behavior](15-maintenance-and-failures.md) for what to document and how to verify a small restore.
 
 Keep the purposes distinct:
 
