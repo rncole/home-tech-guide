@@ -171,6 +171,22 @@ Test a plain message before adding an attachment. Then test supported, oversized
 
 ## Step nine send acknowledgements through an outbox
 
+**Figure — An acknowledgement moves through durable delivery states**
+
+```mermaid
+stateDiagram-v2
+  [*] --> Pending: New ticket queues acknowledgement
+  Pending --> Sending: Due row claimed
+  Sending --> Sent: Provider accepts message
+  Sending --> Pending: Failure below attempt limit
+  Sending --> Failed: Failure at attempt limit
+  Sending --> Sending: Expired lease reclaimed if eligible
+  Sent --> [*]
+  Failed --> [*]
+```
+
+The current processor uses a three-minute lease and at most five claim attempts. Failed sends wait before retry. “Sent” means provider acceptance, not verified inbox delivery. This summarizes the normal paths; an exhausted final lease after interruption still needs operational inspection.
+
 Incoming mail processing and outgoing delivery are separate operations. A new ticket creates an outbox record, not a guarantee that the requester has already received a response.
 
 The main Worker's scheduled handler calls the outbox processor. Its inspected configuration schedules execution every five minutes. When enabled and configured, it selects pending work and claims each row using a lease before sending through Resend.

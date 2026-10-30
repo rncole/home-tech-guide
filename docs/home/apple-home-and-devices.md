@@ -59,6 +59,22 @@ See [Home Assistant and device protocols](home-assistant.md).
 
 ## Presence handoff
 
+**Figure — Away transitions preserve the previous operating intent**
+
+```mermaid
+flowchart TD
+  Leave["Last person leaves"] --> Scheduled{"Winter schedule active?"}
+  Scheduled -->|Yes| Save["Remember schedule was interrupted"]
+  Save --> Minimum["Apply minimum heat"]
+  Scheduled -->|No| LeaveMode["Leave existing Off or Vacation mode"]
+  Return["First person arrives"] --> Saved{"Schedule restoration saved?"}
+  Saved -->|Yes| Resume["Apply current timetable"]
+  Resume --> Clear["Clear restoration flag"]
+  Saved -->|No| NoResume["No automatic schedule restoration"]
+```
+
+The two branches describe the departure and return transitions. Minimum heat still permits demand at fallback targets. Guests and manual mode changes need the explicit policy described below; the diagram does not add a guest-presence override.
+
 The household has a one-touch Heating Away control, connected to Apple Home's last-person-leaves and first-person-arrives automations. Apple handles the presence event; Home Assistant owns the heating transition.
 
 The reviewed implementation is more specific than “turn everything off”:

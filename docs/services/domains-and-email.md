@@ -21,6 +21,25 @@ Before changing nameservers, copy the existing DNS records into the new DNS prov
 
 ## Plan the names before changing anything
 
+**Figure — One domain with independent mail and web destinations**
+
+```mermaid
+flowchart TD
+  Domain["example.com DNS zone"] --> Human["MX for example.com"]
+  Domain --> Web["Web hostname"]
+  Domain --> Intake["MX for intake.example.com"]
+  Domain --> Sending["Sending authentication records"]
+  Human --> Proton["Proton human inbox"]
+  Web --> Worker["Cloudflare application"]
+  Intake --> Receiver["Application mail receiver"]
+  Sending --> Sender["Transactional sender"]
+  Proton -. "Optional tested forwarding" .-> Receiver
+  Receiver --> Tickets["Ticket processing"]
+  Tickets --> Sender
+```
+
+These records can coexist. Web hosting does not move the root-domain mailbox; a receiving subdomain and a notification sender are separately configured. The sending-record branch represents authentication configuration, not incoming mail delivery.
+
 | Example | Intended use | Service |
 | --- | --- | --- |
 | person@example.com | Personal correspondence | Proton |

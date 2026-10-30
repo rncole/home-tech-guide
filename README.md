@@ -6,6 +6,29 @@ A practical guide to the services, devices and integrations I use at home, with 
 
 ## How the pieces fit
 
+**Figure — The two connected parts of the setup**
+
+```mermaid
+flowchart TD
+  subgraph Online["Online services"]
+    DNS["Custom domain and DNS"] --> Mail["Proton Mail"]
+    DNS --> Apps["Cloudflare applications"]
+    Git["GitHub source"] --> Apps
+    Apps --> Data["D1 and R2"]
+  end
+  subgraph Household["Household services"]
+    Network["UniFi network"] --> NAS["Synology"]
+    NAS --> HA["Home Assistant VM"]
+    NAS --> Plex["Plex"]
+    Apple["Apple Home and presence"] <--> HA
+    Protect["Protect events"] --> HA
+    HA <--> Devices["Room devices"]
+  end
+  DNS -. "Service naming" .-> HA
+```
+
+Online applications run independently of the NAS. The dotted naming link represents a custom service name, not a direct connection that bypasses the configured remote-access service.
+
 | Layer | Main tools | Connection to the rest |
 | --- | --- | --- |
 | Online identity and files | Custom domain, Proton Mail and Drive | DNS keeps email, applications and service names independent |

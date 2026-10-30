@@ -13,6 +13,23 @@ Home Assistant is the integration and automation engine. Apple Home provides fam
 
 ## What runs where in my setup
 
+**Figure — Device protocols and the Apple Home bridge**
+
+```mermaid
+flowchart TD
+  Zigbee["Zigbee valves sensors and buttons"] <--> Coordinator["Coordinator and ZHA"]
+  IP["IP devices and HomeWizard"] <--> Native["Native integrations"]
+  Thread["Matter over Thread device"] <--> Border["Thread border router"]
+  Coordinator <--> HA["Home Assistant"]
+  Native <--> HA
+  Border <--> Matter["Matter controller"]
+  Matter <--> HA
+  HA <--> Bridge["HomeKit Bridge"]
+  Bridge <--> Apple["Apple Home and Siri"]
+```
+
+This is a logical integration view. A compatible Apple TV or HomePod can provide the Thread border router; it does not replace the Matter controller. HomeKit Bridge exposes selected Home Assistant entities to Apple Home.
+
 Home Assistant OS runs as a virtual machine on a Synology DS920+. The NAS provides the host; Home Assistant OS provides the automation environment. The Zigbee coordinator is made available to the VM, and ZHA joins the radiator valves, sensors and scene controls to that radio network. No exact coordinator model is prescribed here because it has not been confirmed.
 
 The practical division is:

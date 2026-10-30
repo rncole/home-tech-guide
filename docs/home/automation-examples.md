@@ -91,6 +91,33 @@ The current one-hour state-duration trigger is not an independently verified har
 
 ## A complete bathroom scenario
 
+**Figure — One humidity event drives independent fan and towel timers**
+
+```mermaid
+sequenceDiagram
+  participant Sensor as Bathroom sensor
+  participant HA as Home Assistant
+  participant Fan as Extract fan
+  participant Towel as Towel valve
+  participant Boiler as Boiler relay
+  Sensor->>HA: Humidity exceeds reference plus 10 points
+  par Fan response
+    HA->>Fan: Request high when timer is idle
+    Note over HA,Fan: Off to on starts 20 minute timer
+  and Towel response
+    Note over Sensor,HA: High persists for 20 seconds
+    HA->>Towel: Start 30 minute boost if permitted
+    Towel-->>HA: Report heating demand if required
+    HA->>Boiler: Apply demand and relay timing gates
+  end
+  Note over HA,Fan: At fan expiry recheck both bathrooms
+  HA->>Fan: Keep high if still humid or release high
+  Note over HA,Towel: At towel expiry recalculate schedule
+  HA->>Towel: Apply normal target unless held
+```
+
+The scenario assumes valid readings and the heating permissions described below. Fan and towel expiry are independent; neither timer establishes the other's finish time. A 28°C towel target requests heat rather than measuring towel temperature.
+
 This example follows the existing fan and towel logic. Assume normal winter scheduling and automatic heating are enabled, the sensors are valid and no manual towel hold is active.
 
 1. Bathroom humidity rises more than ten percentage points above the dining-room reference.

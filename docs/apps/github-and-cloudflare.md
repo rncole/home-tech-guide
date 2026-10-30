@@ -94,6 +94,25 @@ Disabling default Worker and preview URLs helps keep the private helpdesk from a
 
 ## Separate checks deployment and migrations
 
+**Figure — Code deployment and schema migration are separate releases**
+
+```mermaid
+flowchart TD
+  Branch["Branch and pull request"] --> Checks{"Source checks and review pass?"}
+  Checks -->|No| Fix["Revise the change"]
+  Fix --> Branch
+  Checks -->|Yes| Merge["Merge to main"]
+  Merge --> Gate{"Main deployment gate enabled?"}
+  Gate -->|Yes| Deploy["Actions deploys Worker code"]
+  Gate -->|No| Hold["No production deployment"]
+  SQL["Reviewed SQL migrations"] --> Manual["Manual migration workflow"]
+  Manual --> D1["Update remote D1 schema"]
+  Deploy --> Verify["Verify compatible code and schema"]
+  D1 --> Verify
+```
+
+The inspected helpdesk workflows separate these operations. The arrows show dependencies, not a prescribed universal migration order: choose a compatible sequence for each schema change. The separate inbound Worker also has its own manual deployment workflow.
+
 The helpdesk's workflows illustrate three different jobs:
 
 | Workflow | Trigger and gate | What it does |

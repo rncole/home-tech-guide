@@ -8,6 +8,29 @@ This chapter describes established household use and a general replication seque
 
 ## What runs on the NAS
 
+**Figure — One NAS hosts storage and two different service environments**
+
+```mermaid
+flowchart TD
+  subgraph Home["Household Synology DS920+"]
+    DSM["DSM host"]
+    Files["Shared files and media"]
+    Plex["Native Plex package"]
+    VMM["Virtual Machine Manager"]
+    VM["Home Assistant OS VM"]
+    DSM --> Files
+    DSM --> Plex
+    DSM --> VMM
+    VMM --> VM
+    Files --> Plex
+  end
+  Plex --> AppleTV["Plex client on Apple TV"]
+  VM <--> Coordinator["Zigbee coordinator"]
+  Files -. "Selected data replication" .-> Family["Family member's DS920"]
+```
+
+This is a responsibility and dependency map, not a disk layout. The off-site destination is confirmed; exact replication jobs and coverage remain to be documented. A NAS restart affects both the native package and the VM.
+
 | Layer | Household use | Responsibility |
 | --- | --- | --- |
 | Synology DS920+ hardware | Always-on local server | Storage and compute |

@@ -90,6 +90,22 @@ A network is not an identity system: a device connected to a different SSID may 
 
 ## Four VPN roles with different purposes
 
+**Figure — Separate local services from internet exit policies**
+
+```mermaid
+flowchart TD
+  Device["Client on a household network"] --> Destination{"Local or private-site service?"}
+  Destination -->|Yes| Local["Permitted LAN or site-to-site route"]
+  Destination -->|No| Policy["Resolve source destination and exception policies"]
+  Policy --> Exit{"Effective internet exit"}
+  Exit -->|Remote Exit network policy| Remote["Tunnel to remote gateway"]
+  Remote --> RemoteWAN["Remote site's internet"]
+  Exit -->|Proton destination or device policy| Proton["Proton VPN internet exit"]
+  Exit -->|Ordinary route| ISP["Local ISP internet exit"]
+```
+
+This is a routing model, not an export of rule priority. If a source-based remote-exit rule and a Proton destination rule both match, define and test which wins. Test IPv4, IPv6 and tunnel-failure behavior separately. A travelling client's inbound VPN is a distinct access path.
+
 | Use | Traffic selected by | Exit or destination | Household role |
 | --- | --- | --- | --- |
 | Site-to-site access | Remote private networks and routes | The other site's private network | Connects the two sites |
