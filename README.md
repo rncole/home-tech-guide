@@ -10,20 +10,16 @@ A practical guide to the services, devices and integrations I use at home, with 
 
 ```mermaid
 flowchart TD
-  subgraph Online["Online services"]
-    DNS["Custom domain and DNS"] --> Mail["Proton Mail"]
-    DNS --> Apps["Cloudflare applications"]
-    Git["GitHub source"] --> Apps
-    Apps --> Data["D1 and R2"]
-  end
-  subgraph Household["Household services"]
-    Network["UniFi network"] --> NAS["Synology"]
-    NAS --> HA["Home Assistant VM"]
-    NAS --> Plex["Plex"]
-    Apple["Apple Home and presence"] <--> HA
-    Protect["Protect events"] --> HA
-    HA <--> Devices["Room devices"]
-  end
+  DNS["Custom domain and DNS"] --> Mail["Proton Mail"]
+  DNS --> Apps["Cloudflare applications"]
+  Git["GitHub source"] --> Apps
+  Apps --> Data["D1 and R2"]
+  Network["UniFi network"] --> NAS["Synology"]
+  NAS --> HA["Home Assistant VM"]
+  NAS --> Plex["Plex"]
+  Apple["Apple Home and presence"] <--> HA
+  Protect["Protect events"] --> HA
+  HA <--> Devices["Room devices"]
   DNS -. "Service naming" .-> HA
 ```
 
