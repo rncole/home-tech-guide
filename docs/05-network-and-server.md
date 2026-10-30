@@ -159,36 +159,68 @@ When reproducing either VPN path, test the effective result for IPv4, IPv6 and D
 
 Also define what happens if a Remote Exit client visits a Proton-selected destination. The answer depends on the actual route precedence and exclusions. Document the intended winner and verify it; do not assume that source-based and destination-based policies combine automatically.
 
-## Protect cameras and smoke or CO alarm listening
+## Protect smoke and CO events
 
-UniFi Protect handles the camera system and supported alarm-sound detections. The smoke/CO feature described in this household is an **acoustic listener for existing conventional alarms**, rather than a standalone smoke or carbon-monoxide sensing element.
+UniFi Protect supplies smoke and CO information to Home Assistant through the Protect integration. Two different hardware paths must be distinguished:
 
-The integration path is:
+| Path | What detects the hazard | What reaches Protect |
+| --- | --- | --- |
+| Dedicated SuperLink smoke and CO alarm such as USL-Smoke | The alarm's own smoke and CO sensing | Alarm information over SuperLink |
+| Alarm-sound detection on supported Protect equipment | An existing independent alarm detects the hazard | Recognition of that alarm's audible pattern |
+
+The [USL-Smoke product information](https://eu.store.ui.com/eu/en/products/usl-smoke) describes a dedicated smoke and CO alarm. It must not be described as merely a microphone listening to another alarm.
+
+Earlier household Home Assistant inventories also contained alarm-sound detection entities. Those establish the presence of an acoustic-event path, but do not prove the model or sensing method of every installed detector. The exact household detector model needs confirmation before choosing one of these rows as its hardware description.
+
+The shared integration pattern is: device detection or event → UniFi Protect → Home Assistant integration → chosen alerts or household actions. Check actual entities and event values for the installed hardware, including whether smoke and CO appear separately and how unavailable state is represented.
+
+To replicate:
+
+1. Identify the exact alarm or listening device and follow its installation requirements.
+2. Confirm its event in Protect first.
+3. Add the Protect integration in Home Assistant with suitable authorization.
+4. Inspect the actual entities and distinguish smoke, CO and unavailable state.
+5. Configure the intended responses and test using the manufacturer's approved test procedure.
+6. Verify downstream notifications independently of the alarm's own local warning.
+
+No particular Home Assistant smoke/CO response automation is asserted here; the established point is that Protect information feeds into Home Assistant. Keep the detector's own warning function distinct from the additional network and notification chain.
+
+## An existing doorbell made smart with a Protect relay
+
+The household uses a **UniFi SuperLink Relay USL-Relay** to connect an ordinary doorbell button and conventional bell to Protect, with a push alert when the button is pressed. This adds notification capability without requiring the button and bell to be replaced by a video doorbell.
+
+The arrangement has two separate electrical jobs:
+
+- **Input:** the existing button acts as a dry contact to the relay input.
+- **Output:** a momentary relay contact operates the existing bell circuit.
+- **Power:** the relay has its own DC supply; it does not use its input as the bell's power circuit.
+
+In the household setup, the conventional bell circuit is 12 V AC. This is a description of that installation, not a universal wiring diagram. The [USL-Relay specifications](https://techspecs.ui.com/unifi/physical-security/usl-relay?subcategory=all-physical-security) distinguish signal inputs, power and dry-contact outputs.
 
 ```mermaid
 flowchart TD
-  Detector["Conventional smoke or CO alarm"] --> Sound["Audible alarm pattern"]
-  Sound --> Listener["Supported Protect device listens"]
-  Listener --> Protect["UniFi Protect event or state"]
-  Protect --> HA["Home Assistant Protect integration"]
-  HA --> Rules["Chosen alerts or household actions"]
+  Button["Existing doorbell button"] --> Input["USL-Relay dry-contact input"]
+  Input --> Action["Configured momentary bell action"]
+  Action --> Output["Relay output and existing bell circuit"]
+  Input --> Link["SuperLink gateway and Protect"]
+  Link --> Push["Doorbell push alert"]
+  Link --> HA["Home Assistant Protect integration"]
 ```
 
-Home Assistant has received Protect alarm-sound states distinguishing no alarm, smoke and CO, with entity presentation varying by device and integration. Available entities must be checked per device; an unavailable sensor is not an affirmative “no alarm” reading.
+The local bell action, Protect event, push delivery and optional Home Assistant response are separate things to verify. The household confirms the doorbell push alert; its exact notification-rule owner is not established in the selected YAML, so this guide does not assign that alert specifically to a Home Assistant automation.
 
-The useful integration is central visibility: the same automation platform that understands room state can react to a Protect detection. Phone alerts, lights or announcements are possible responses to build and test. This chapter does not claim a particular smoke/CO response automation is installed, because the reviewed evidence establishes the event path rather than its final actions.
+A replication sequence is:
 
-### Replication and verification
+1. Establish the button contact type, bell transformer and bell circuit requirements.
+2. Select a compatible relay arrangement and provide its required power.
+3. Adopt the relay through the SuperLink gateway into Protect.
+4. Connect and test the button input separately from the bell output, following the equipment documentation.
+5. Configure a momentary bell action rather than leaving the bell output continuously active.
+6. Configure the button event's push notification and test with the phone locked and away from home.
+7. Bring the relay's supported states into Home Assistant if additional automations are wanted.
+8. Test one press, a held button, repeated presses, and behavior after a restart.
 
-1. Keep suitable conventional smoke and CO alarms installed for their primary detection and audible warning role.
-2. Use Protect hardware with the relevant alarm-listening capability and configure it in Protect.
-3. Confirm the detected event in Protect before involving Home Assistant.
-4. Add the UniFi Protect integration and inspect the device's actual entities and event values.
-5. Build a response that distinguishes smoke from CO and identifies the relevant zone without exposing private camera access.
-6. Test using the alarm manufacturer's approved test procedure, checking what the listener and integration actually report.
-7. Test notifications while the phone is locked and away from home, and make unavailable-device status visible.
-
-The acoustic and network chain supplements the original alarms. It depends on sound recognition, powered equipment, communications and any chosen notification path. It does not replace an alarm's own detection or warning function. Avoid automatically disabling ventilation or other equipment based on a generic example; define any such action for the actual installation.
+This is a useful example of the wider approach: retain a simple physical interface, use Protect and SuperLink to connect it, and expose useful events to Home Assistant. It does not require every notification or relay action to pass through Home Assistant.
 
 ## ISP router and remote access
 
@@ -239,7 +271,7 @@ Home Assistant has used Nabu Casa remote access with a custom hostname. Follow i
 
 ## Setup documentation
 
-Provider menus and supported routing features change. The following official entry points are useful when reproducing the design; the provider documentation could not be rechecked during this chapter update.
+Provider menus and supported routing features change. The following official entry points are useful when reproducing the design; general routing documentation could not be rechecked during the initial network expansion; the smoke/CO product distinction and relay specifications were subsequently checked.
 
 - [UniFi help and networking documentation](https://help.ui.com/)
 - [Home Assistant UniFi Protect integration](https://www.home-assistant.io/integrations/unifiprotect/)
